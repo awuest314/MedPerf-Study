@@ -65,7 +65,7 @@ class CTScanDataset(Dataset):
         return feature, label
     
 
-def unet_model(images, model_path):
+def unet_model(images, model_path, output):
     """
     Generates predictions for images
     
@@ -88,10 +88,9 @@ def unet_model(images, model_path):
     testloader = DataLoader(test_dataset, batch_size=8,
                              shuffle=False, num_workers=0)
 
-    loss = 0
-    dice_total_avg = 0
-    dice_class0_avg = 0
-    dice_class1_avg = 0
+    file_names = os.listdir(images)
+    print(file_names)
+    idx = 0
     with torch.no_grad():
         for data in testloader:
             images, targets = data
@@ -99,8 +98,11 @@ def unet_model(images, model_path):
             targets = F.one_hot(targets.long(), num_classes=2)
             targets = torch.permute(targets, (0, 3, 1, 2))
             outputs = net(images)
+            torch.save(outputs, os.path.join(output, file_names[idx]))
+            idx += 1
+            
 
-            loss += criterion(outputs, targets.float()).item()
+"""            loss += criterion(outputs, targets.float()).item()
 
             outputs_cat = F.one_hot(torch.argmax(outputs, axis=1), num_classes=2)
             outputs_cat = torch.permute(outputs_cat, (0, 3, 1, 2))
@@ -109,12 +111,12 @@ def unet_model(images, model_path):
             dice_total_avg += dice_avg.item()
             dice_class0_avg += dice_class[0].item()
             dice_class1_avg += dice_class[1].item()
-    
+
     dice_total_avg /= len(testloader)
     dice_class0_avg /= len(testloader)
     dice_class1_avg /= len(testloader)
 
-    return loss, dice_total_avg, dice_class0_avg, dice_class1_avg
+    return loss, dice_total_avg, dice_class0_avg, dice_class1_avg"""
 
 
 if __name__ == '__main__':
@@ -132,14 +134,15 @@ if __name__ == '__main__':
     print(args.model_info)
     print(args.names)
     print("run unet model")
-  
-    loss, dice_total_avg, dice_class0_avg, dice_class1_avg = unet_model(args.names, args.model_info)
-    list_vals = [loss, dice_total_avg, dice_class0_avg, dice_class1_avg]
+    unet_model(args.names, args.model_info, args.out)
+    #list_vals = [loss, dice_total_avg, dice_class0_avg, dice_class1_avg]
+    #loss, dice_total_avg, dice_class0_avg, dice_class1_avg = unet_model(args.names, args.model_info)
+    #list_vals = [loss, dice_total_avg, dice_class0_avg, dice_class1_avg]
 
-    out_file = os.path.join(args.out, "predictions.csv")
+"""    out_file = os.path.join(args.out, "predictions.csv")
     with open(out_file, "w") as f:
         writer = csv.writer(f)
         writer.writerow(["loss", "dice_total_avg", "dice_class0_avg","dice_class1_avg"])
         for idx in range(0,4):
-            writer.writerow([idx, list_vals[idx]])
+            writer.writerow([idx, list_vals[idx]])"""
             
