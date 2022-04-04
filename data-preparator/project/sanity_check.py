@@ -51,7 +51,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    file = os.path.join(args.data, "synapse_train/")
+    #file = os.path.join(args.data, "synapse_train/")
+    file = args.data
     print(file)
     files_df = os.listdir(file)
     print(files_df)

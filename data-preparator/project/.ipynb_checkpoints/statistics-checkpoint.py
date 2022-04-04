@@ -40,8 +40,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    trainfile = os.path.join(args.data, "synapse_train")
-    testfile = os.path.join(args.data, "synapse_test")
+    #trainfile = os.path.join(args.data, "synapse_train")
+    #testfile = os.path.join(args.data, "synapse_test")
+    trainfile = args.data
+    testfile = args.data
     labelfile = args.labels
     stats = get_statistics(trainfile, testfile, labelfile)
 

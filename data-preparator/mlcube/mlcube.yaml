@@ -20,7 +20,7 @@ tasks:
   # expected by the model cubes. 
     parameters:
       inputs: {
-        data_path: names/,            # Required. Value must point to a directory containing the raw data inside workspace
+        data_path: images/,            # Required. Value must point to a directory containing the raw data inside workspace
         labels_path: labels/,         # Required. Value must point to a directory containing labels for the data
         parameters_file: parameters.yaml # Required. Value must be `parameters.yaml`
       }

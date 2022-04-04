@@ -68,7 +68,9 @@ def prepare(path, data_id):
         label_final = np.flip(label_tcia, axis=0)
         # label_final = rotate_image(label_array, 2, (0, 2))
 
-    save_dir = os.path.join(parent_save_folder, dataset + suffix, feature_id)
+    #save_dir = os.path.join(parent_save_folder, dataset + suffix, feature_id)
+    print("parent save folder:", parent_save_folder)
+    save_dir = os.path.join(parent_save_folder, feature_id)
     # print('saving dir: {0}'.format(save_dir))
     return save_dir, feature_final, label_final
 
@@ -95,7 +97,7 @@ def partition_pickle_data(path, image_patient, target_patient):
         image_names: list of image 2.5D image segmentation arrays
     """
     for n in range(image_patient.shape[0] - 2):
-        # print("path:", path)
+        print("path:", path)
         file_name1 = path + "_" + str(n) + '.npy'
         # identify the three arrays of interest
         pickle_image = image_patient[n:n+3, :, :]
@@ -250,13 +252,14 @@ def dataset_specific_process(parent_save_folder, feature_dir, label_dir, dataset
         label_final = np.flip(label_tcia, axis=0)
         # label_final = rotate_image(label_array, 2, (0, 2))
 
-    save_dir = os.path.join(parent_save_folder, dataset + suffix, feature_id)
+    save_dir = os.path.join(parent_save_folder, feature_id)
+    # save_dir = os.path.join(parent_save_folder, dataset + suffix, feature_id)
     # save_dir = os.path.join(parent_save_folder, feature_id)
     print('saving dir: {0}'.format(save_dir))
     return save_dir, feature_final, label_final
 
 def data_preprocess(feature_folder, label_folder, dataset, 
-                    parent_save_folder, train_rate=0.05):
+                    parent_save_folder, train_rate=0.15):
     """
     load data into numpy array and store as pickle files
     
@@ -324,12 +327,12 @@ def data_preprocess(feature_folder, label_folder, dataset,
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser("Medperf Data Preparator Example")
-    parser.add_argument("--names_path", dest="names", type=str, help="path containing raw names")
+    parser.add_argument("--images_path", dest="images", type=str, help="path containing raw names")
     parser.add_argument("--labels_path", dest="labels", type=str, help="path containing labels")
     parser.add_argument("--out", dest="out" , type=str, help="path to store prepared data")
 
     args = parser.parse_args()
-    print(args.names)
+    print(args.images)
 
     
 #     with open(args.parameters_file, "r") as stream:
@@ -337,7 +340,7 @@ if __name__ == '__main__':
 #     logger.info("Parameters have been read (%s).", args.parameters_file)
 
 
-    path = args.names
+    path = args.images
     label = args.labels
     out = args.out
 
@@ -350,19 +353,22 @@ if __name__ == '__main__':
     feature_folder = path
     # label_folder_tcia = 'TCIA-labels'
     label_folder = label
-    
-    image_path = os.listdir(feature_folder_synapse)
+    print("feature folder:", feature_folder)
+    image_path = os.listdir(feature_folder)
+    print(image_path[0])
     if "nii.gz" in image_path[0]:
+        print("Processing Synapse Data")
         key = 'synapse'
     else:
-        key = 'TCIA'
+        key = 'tcia'
+        print("Processing TCIA data")
 
 #     feature_folder: directory for target data (train / test)
 #     label_folder: directory for image folders inside each patient's data
 #     dataset: dataset name (select between 'synapse', 'task07', 'tcia')
 #     parent_save_folder: parent directory for data saving
 
-    output_synapse = data_preprocess(feature_folder=feature_folder, 
-                                     label_folder=label_folder, 
-                                     dataset=key
-                                     parent_save_folder=parent_folder)
+    output_synapse = data_preprocess(feature_folder=feature_folder,
+                                    label_folder=label_folder, 
+                                    dataset=key,
+                                    parent_save_folder=parent_folder)
