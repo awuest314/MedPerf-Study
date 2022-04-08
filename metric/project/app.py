@@ -24,8 +24,8 @@ from torchvision.models import vgg16_bn
 import time
 from typing import List
 
-import UNet
-from UNet import dice_coef_multilabel, dice_coef
+import metric_utils
+from metric_utils import dice_coef_multilabel, dice_coef
 import yaml
 # Define PyTorch Dataloader
 class CTScanDataset(Dataset):
@@ -65,7 +65,7 @@ class CTScanDataset(Dataset):
         return feature, label
     
 
-def unet_model(images_path, preds, output):
+def unet_metrics(images_path, preds, output):
     """
     Generates predictions for images
     
@@ -76,10 +76,6 @@ def unet_model(images_path, preds, output):
     test_dataset = images_path
     # define test loader
     test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0)
-    # load pre-trained torch model 
-    #net = torch.load(model_path, map_location=torch.device(device))
-    # net = UNet.UNet()
-    # net.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
     criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(50))
     # optimizer = torch.optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
     # load dataset
@@ -159,7 +155,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    loss, dice_total_avg, dice_class0_avg, dice_class1_avg = unet_model(args.labels_csv, args.preds_csv, args.output_file)
+    loss, dice_total_avg, dice_class0_avg, dice_class1_avg = unet_metrics(args.labels_csv, args.preds_csv, args.output_file)
     list_vals = [loss, dice_total_avg, dice_class0_avg, dice_class1_avg]
 
     
@@ -174,11 +170,4 @@ if __name__ == '__main__':
     with open(args.output_file, "w") as f:
         yaml.dump(results, f)
         
-        
-"""    out_file = os.path.join(args.output_file, "predictions.csv")
-    with open(out_file, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(["loss", "dice_total_avg", "dice_class0_avg","dice_class1_avg"])
-        for idx in range(0,4):
-            writer.writerow([idx, list_vals[idx]])
-            """
+   
