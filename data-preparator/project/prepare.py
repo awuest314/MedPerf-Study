@@ -259,7 +259,7 @@ def dataset_specific_process(parent_save_folder, feature_dir, label_dir, dataset
     return save_dir, feature_final, label_final
 
 def data_preprocess(feature_folder, label_folder, dataset, 
-                    parent_save_folder, train_rate=0.15):
+                    parent_save_folder, train_rate=1):
     """
     load data into numpy array and store as pickle files
     
