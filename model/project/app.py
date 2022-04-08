@@ -95,10 +95,17 @@ def unet_model(images, model_path, output):
         for data in testloader:
             images, targets = data
             images, targets = images.to(device=device, dtype=torch.float), targets.to(device=device)
+            print(images)
             targets = F.one_hot(targets.long(), num_classes=2)
             targets = torch.permute(targets, (0, 3, 1, 2))
             outputs = net(images)
-            torch.save(outputs, os.path.join(output, file_names[idx]))
+            print(outputs)
+            print("save:",os.path.join(output, file_names[idx]))
+            #np.save(outputs, os.path.join(output, file_names[idx]))
+            #outputs_cat = F.one_hot(torch.argmax(outputs, axis=1), num_classes=2)
+            #outputs_cat = torch.permute(outputs_cat, (0, 3, 1, 2))
+
+            torch.save(outputs_cat, os.path.join(output, file_names[idx]))
             idx += 1
             
 
