@@ -43,7 +43,8 @@ def infer(
     model_file = os.path.join(model_info, "unet_full.pth")
     
     #names_file = os.path.join(data_path, "0024_49.npy")
-    names_file = os.path.join(data_path)
+    #names_file = os.path.join(data_path)
+    names_file = data_path
         
     #uppercase = params["uppercase"]
     # data, additional files, output

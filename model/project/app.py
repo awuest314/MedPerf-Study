@@ -43,6 +43,7 @@ class CTScanDataset(Dataset):
         """
         self.root_dir = data_dir
         self.files = os.listdir(data_dir)
+        #print("self files:", self.files)
         self.transform = transform
 
     def __len__(self):
@@ -58,6 +59,7 @@ class CTScanDataset(Dataset):
             data = np.load(f)
             feature = data[:-1, :, :].astype('float32')
             label = data[-1, :, :].astype('int8')
+            #print("len label:", label)
 
         if self.transform:
             sample = self.transform(sample)
@@ -75,7 +77,8 @@ def unet_model(images, model_path, output):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     test_dataset = images
     # define test loader
-    test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0)
+    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
+    print("t l:", len(test_loader))
     # load pre-trained torch model 
     #net = torch.load(model_path, map_location=torch.device(device))
     net = UNet.UNet()
@@ -87,20 +90,24 @@ def unet_model(images, model_path, output):
     #define test_loader
     testloader = DataLoader(test_dataset, batch_size=8,
                              shuffle=False, num_workers=0)
+    #print("len testloader:", len(testloader))
 
     file_names = os.listdir(images)
     print(file_names)
     idx = 0
     with torch.no_grad():
+        print(len(testloader))
         for data in testloader:
             images, targets = data
             images, targets = images.to(device=device, dtype=torch.float), targets.to(device=device)
             targets = F.one_hot(targets.long(), num_classes=2)
             targets = torch.permute(targets, (0, 3, 1, 2))
             outputs = net(images)
-            torch.save(outputs, os.path.join(output, file_names[idx]))
-            idx += 1
-            
+            print("saving:", file_names[idx])
+            for row in range(len(outputs)):
+                pred = outputs[row] 
+                torch.save(pred, os.path.join(output, file_names[idx]))
+                idx = idx + 1
 
 """            loss += criterion(outputs, targets.float()).item()
 
