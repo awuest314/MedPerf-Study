@@ -75,13 +75,13 @@ def unet_metrics(images_path, preds, output):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     test_dataset = images_path
     # define test loader
-    test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0)
+    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
     criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(50))
     # optimizer = torch.optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
     # load dataset
     test_dataset = CTScanDataset(images_path)
     #define test_loader
-    testloader = DataLoader(test_dataset, batch_size=8,
+    testloader = DataLoader(test_dataset, batch_size=1,
                              shuffle=False, num_workers=0)
 
     loss = 0
@@ -103,6 +103,7 @@ def unet_metrics(images_path, preds, output):
             targets = torch.permute(targets, (0, 3, 1, 2))
             # outputs = net(images)
             labels = torch.load(os.path.join(preds, file_names[idx]))
+            labels = torch.unsqueeze(labels, 0)
             print("labels", labels)
             loss += criterion(labels, targets.float()).item()
 
