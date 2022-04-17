@@ -1,5 +1,11 @@
 # MedPerf-Study
 
+All material has been pulled into https://github.com/mlcommons/medperf/#pilots 
+
+Please check the link above for detailed code, data, experiments, and documentation.
+
+Thank you!
+
 You can find the official MLCubes implementation at medperf's repository: https://github.com/mlcommons/medperf/tree/alpha-examples/examples/DFCI
 
 This repo consists of 5 mlcubes:
